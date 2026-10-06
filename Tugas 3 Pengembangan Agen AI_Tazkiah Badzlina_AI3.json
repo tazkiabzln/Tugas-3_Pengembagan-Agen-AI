@@ -1,0 +1,165 @@
+{
+  "name": "Tugas 3 Pengembangan Agen AI_Tazkiah Badzlina_AI3",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "👋 Halo! Saya siap membantu kamu mencari informasi tentang membership dan kelas gym.\nMau cari tahu tentang paket membership, jadwal kelas, atau harga? 😊",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        -112,
+        -64
+      ],
+      "id": "5b5199d6-627e-4d4e-a3a7-1fd7a966f6ed",
+      "name": "When chat message received",
+      "webhookId": "057ac9ec-2c23-41ef-805c-bab458ddf258"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Anda adalah chatbot informasi gym yang membantu pengguna mendapatkan informasi mengenai membership dan kelas gym berdasarkan data yang tersedia di Google Sheets.\n\nGunakan Tool Google Sheets untuk mencari data sebelum menjawab pertanyaan pengguna.\n\nAnda dapat memberikan informasi mengenai nama paket atau kelas, jenis, jadwal, durasi, harga, dan keterangan.\n\nJawablah pertanyaan berdasarkan data yang tersedia di Google Sheets dan jangan membuat atau mengarang informasi yang tidak terdapat dalam data.\n\nJika informasi yang ditanyakan tidak ditemukan dalam data, sampaikan bahwa informasi tersebut tidak tersedia.\n\nJawablah dalam bahasa Indonesia dengan jelas, singkat, dan mudah dipahami."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        112,
+        -64
+      ],
+      "id": "a0ecb283-ceb6-40c9-a74e-241aed79ea1a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -16,
+        144
+      ],
+      "id": "5647ad0b-2d61-49ef-a0c5-fab439b260e1",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "krgfquyQ0MtKP6Dr",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        128,
+        144
+      ],
+      "id": "f8b43676-ce0f-4435-aaac-74cab5592242",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1g02c8oRCRX43jQyAcmCZhES3pVCgPDYV-J2o-rWnYFM",
+          "mode": "list",
+          "cachedResultName": "Daftar Kelas & Member Gym",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1g02c8oRCRX43jQyAcmCZhES3pVCgPDYV-J2o-rWnYFM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1047739013,
+          "mode": "list",
+          "cachedResultName": "DataGym",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1g02c8oRCRX43jQyAcmCZhES3pVCgPDYV-J2o-rWnYFM/edit#gid=1047739013"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        272,
+        144
+      ],
+      "id": "11dc5fb3-26fd-447e-9786-0e4ce97c45b0",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Yu0KBHdi0u48n7k7",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "94bd9c87-c989-463c-a8d5-bb67c6095f21",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc96f10ae7dc95d3c138575ba243a0a167923dbcb524841d451aadf9135d5fb3"
+  },
+  "nodeGroups": [],
+  "id": "ooSatYM0XEuMsYdg",
+  "tags": []
+}
